@@ -1,9 +1,16 @@
+VERSION=v0.0.0
+
 # Ourselves
 CFLAGS?=
-CFLAGS+=-O2 -mtune=native -march=native -pipe -Wall
+CFLAGS+=-D VERSION=\"$(VERSION)\"
+CFLAGS+=-O2 -mtune=native -march=native -pipe
+CFLAGS+=-Wall
 INCLUDES?=
 INCLUDES+=-Isrc
-SRC:=$(wildcard src/*.c)
+SRC:=
+SRC+=$(wildcard src/*.c)
+SRC+=$(wildcard src/*/*.c)
+SRC+=$(wildcard src/*/*/*.c)
 
 # lib/argparse
 INCLUDES+=-Ilib/argparse
