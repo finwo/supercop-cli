@@ -1,4 +1,4 @@
-VERSION=v0.0.0
+include config.mk
 
 # Ourselves
 CFLAGS?=
@@ -49,6 +49,13 @@ lib/ed25519:
 	mkdir -p lib/ed25519
 	curl -sL https://github.com/orlp/ed25519/archive/refs/heads/master.tar.gz | tar xzv -C lib/ed25519 --strip-components=1
 	bash -c 'cd lib/ed25519 && patch -p1 < ../../patch/ed25519/00-single-file-compile.patch'
+
+.PHONY: install
+install: supercop
+	install -d ${DESTDIR}${PREFIX}/bin
+	install -m 755 supercop ${DESTDIR}${PREFIX}/bin
+	install -d ${DESTDIR}${MANPREFIX}/man1
+	install -m 644 $(wildcard man/*.1) ${DESTDIR}${MANPREFIX}/man1
 
 .PHONY: clean
 clean:

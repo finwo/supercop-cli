@@ -1,0 +1,59 @@
+.TH supercop 1 "Sep 16, 2021" "" "FINWO"
+
+.SH NAME
+supercop - Simplified CLI for supercop-ref10
+
+.SH SYNOPSIS
+\fBsupercop\fR \fI<operation>\fR [\fB-k\fR \fIkeyfile\fR] [\fB-m\fR \fImessage\fR] [\fB-M\fR \fImessage-file\fR] [\fB-s\fR \fIsignature\fR]
+
+.SH DESCRIPTION
+This program allows easy signing and signature verification for the supercop-ref10 implementation of the ed25519 signature scheme.
+
+.SH OPERATIONS
+.TP
+.B \-\-printkey
+Print contents of key file
+.TP
+.B \-\-generate
+Generate a new key
+.TP
+.B \-\-sign
+Sign a message
+.TP
+.B \-\-verify
+Verify a message signature
+.TP
+.B \-\-version
+Show version number and exit
+
+.SH OPTIONS
+.TP
+.B \-h, \-\-help
+Show usage and exit
+.TP
+.B \-k, \-\-key\-file\fR \fIpath\fR
+Select key file to use for the operation
+.TP
+.B \-m, \-\-message\fR \fImessage_string\fR
+Message to sign or verify (defaults to stdin)
+.TP
+.B \-M, \-\-message\-file\fR \fIpath\fR
+Message file to sign or verify (defaults to stdin)
+.TP
+.B \-s, \-\-signature\fR \fIsignature_string\fR
+Signature to verify the message against
+
+.SH RETURN VALUE
+Here are the possible return values:
+.RS
+.IP \(bu 2
+.B 0 \fR Everything went fine or the signature was valid
+.IP \(bu 2
+.B 1 \fR Signature was invalid or an error occurred, see stderr for an explanation
+.RE
+
+.SH ENVIRONMENT
+supercop doesn't follow any environment variables
+
+.SH AUTHOR
+finwo  (https://finwo.nl)

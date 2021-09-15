@@ -192,12 +192,14 @@ int main(int argc, const char **argv) {
     OPT_BIT(0, "sign"    , &command, "Sign a message"              , NULL, COMMAND_SIGN    ),
     OPT_BIT(0, "verify"  , &command, "Verify a message signature"  , NULL, COMMAND_VERIFY  ),
     OPT_BIT(0, "version" , &command, "Show version number and exit", NULL, COMMAND_VERSION ),
+    // TODO: key-exchange (would be cool, questionable usability though
     OPT_GROUP("Basic options"),
     OPT_HELP(),
     OPT_STRING('k', "key-file"    , &keyFile        , "Select key file to use for the operation"),
     OPT_STRING('m', "message"     , &message        , "Message to sign or verify (defaults to stdin)"),
     OPT_STRING('M', "message-file", &messageFile    , "Message file to sign or verify (defaults to stdin)"),
     OPT_STRING('s', "signature"   , &verifySignature, "Signature to verify"),
+    // TODO: signature-file (for both sign & verify)
     OPT_END(),
   };
 
