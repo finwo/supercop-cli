@@ -35,6 +35,9 @@ OBJ:=$(patsubst %.c,%.o,$(SRC))
 .PHONY: default
 default: supercop
 
+README.md:
+	man --html=cat ./man/supercop.1 > README.md
+
 supercop: lib/argparse lib/ed25519 $(OBJ)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(OBJ)
 
