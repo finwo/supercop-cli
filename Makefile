@@ -1,9 +1,13 @@
 include config.mk
 
+
 # Ourselves
+MTUNE?=native
+MARCH?=native
 CFLAGS?=
 CFLAGS+=-D VERSION=\"$(VERSION)\"
-CFLAGS+=-O2 -mtune=native -march=native -pipe
+CFLAGS+=-mtune=$(MTUNE) -march=$(MARCH)
+CFLAGS+=-O2 -pipe
 CFLAGS+=-Wall
 INCLUDES?=
 INCLUDES+=-Isrc
@@ -42,8 +46,8 @@ supercop: lib/argparse lib/ed25519 $(OBJ)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(OBJ)
 
 .PHONY: small
-small:
-	$(MAKE) "CFLAGS=-static -Os -s -fno-stack-protector -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-math-errno -fno-unroll-loops -fmerge-all-constants -fno-ident -ffast-math -Wl,-z,norelro -Wl,--hash-style=gnu -Wl,--build-id=none" supercop
+static:
+	CFLAGS="-static -Os -s" $(MAKE) "MTUNE=$(MTUNE)" "MARCH=$(MARCH)" supercop
 	strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag supercop
 
 %.o: %.c
