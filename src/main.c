@@ -17,8 +17,8 @@
 extern "C" {
 #endif
 
-#include "../lib/argparse/argparse.h"
-#include "../lib/ed25519/src/ed25519.h"
+#include "cofyc/argparse.h"
+#include "orlp/ed25519.h"
 #include "fmt/common.h"
 #include "keypair/keypair.h"
 
