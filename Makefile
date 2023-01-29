@@ -25,8 +25,8 @@ OBJ:=$(patsubst %.c,%.o,$(SRC))
 .PHONY: default
 default: supercop
 
-README.md:
-	man --html=cat ./man/supercop.1 > README.md
+README.md: ./man/supercop.1
+	pandoc $< --output=$@
 
 supercop: $(OBJ)
 	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(OBJ)
