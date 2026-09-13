@@ -20,9 +20,9 @@ static int cmd_sign(int argc, const char **argv) {
   };
   struct argparse_option options[] = {
     OPT_HELP(),
-    OPT_STRING('k', "key-file", &keyFile, "Select key file to use for the operation"),
-    OPT_STRING('m', "message", &message, "Message to sign (defaults to stdin)"),
-    OPT_STRING('M', "message-file", &messageFile, "Message file to sign (defaults to stdin)"),
+    OPT_STRING('k', "key-file", &keyFile, "Select key file to use for the operation", NULL, 0, 0),
+    OPT_STRING('m', "message", &message, "Message to sign (defaults to stdin)", NULL, 0, 0),
+    OPT_STRING('M', "message-file", &messageFile, "Message file to sign (defaults to stdin)", NULL, 0, 0),
     OPT_END(),
   };
 
@@ -39,6 +39,16 @@ static int cmd_sign(int argc, const char **argv) {
 
   fmessage = supercop_open_message(message, messageFile);
   kp = readKeyFile(keyFile);
+  if (!kp || !kp->public_key) {
+    fprintf(stderr, "Could not decode key file: unknown or invalid format\n");
+    if (kp) keypair_free(kp);
+    return 1;
+  }
+  if (!kp->private_key) {
+    fprintf(stderr, "Key file contains no private key: signing requires a full key\n");
+    keypair_free(kp);
+    return 1;
+  }
 
   long message_len = fremaining(fmessage);
   const unsigned char *msg = calloc(1, message_len);

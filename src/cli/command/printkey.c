@@ -16,7 +16,7 @@ static int cmd_printkey(int argc, const char **argv) {
   };
   struct argparse_option options[] = {
     OPT_HELP(),
-    OPT_STRING('k', "key-file", &keyFile, "Select key file to use for the operation"),
+    OPT_STRING('k', "key-file", &keyFile, "Select key file to use for the operation", NULL, 0, 0),
     OPT_END(),
   };
 
@@ -32,11 +32,20 @@ static int cmd_printkey(int argc, const char **argv) {
   }
 
   kp = readKeyFile(keyFile);
+  if (!kp || !kp->public_key) {
+    fprintf(stderr, "Could not decode key file: unknown or invalid format\n");
+    if (kp) keypair_free(kp);
+    return 1;
+  }
 
   fprintf(stdout, "public-key: ");
   for(i=0;i<32;i++) fprintf(stdout, "%02x", kp->public_key[i]);
-  fprintf(stdout, "\nprivate-key: ");
-  for(i=0;i<64;i++) fprintf(stdout, "%02x", kp->private_key[i]);
+  if (kp->private_key) {
+    fprintf(stdout, "\nprivate-key: ");
+    for(i=0;i<64;i++) fprintf(stdout, "%02x", kp->private_key[i]);
+  } else {
+    fprintf(stdout, "\nprivate-key: (no private key in file)");
+  }
   fprintf(stdout, "\n");
 
   result = 0;

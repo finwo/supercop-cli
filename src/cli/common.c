@@ -34,16 +34,22 @@ struct KeyPair *readKeyFile(const char *filename) {
 
   // Auto-detect format
   while(fmt) {
-    if (!fmt->detect(buf)) {
+    if (!fmt->detect(buf, fsize)) {
       fmt = fmt->next;
       continue;
     }
-    kp = fmt->decode(buf);
+    kp = fmt->decode(buf, fsize);
+    if (!kp) {
+      fmt = fmt->next;
+      continue;
+    }
     free(buf);
     fclose(fd);
     return kp;
   }
 
+  free(buf);
+  fclose(fd);
   return NULL;
 }
 

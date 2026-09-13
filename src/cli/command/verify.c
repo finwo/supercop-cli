@@ -22,10 +22,10 @@ static int cmd_verify(int argc, const char **argv) {
   };
   struct argparse_option options[] = {
     OPT_HELP(),
-    OPT_STRING('k', "key-file", &keyFile, "Select key file to use for the operation"),
-    OPT_STRING('m', "message", &message, "Message to verify (defaults to stdin)"),
-    OPT_STRING('M', "message-file", &messageFile, "Message file to verify (defaults to stdin)"),
-    OPT_STRING('s', "signature", &verifySignature, "Signature to verify"),
+    OPT_STRING('k', "key-file", &keyFile, "Select key file to use for the operation", NULL, 0, 0),
+    OPT_STRING('m', "message", &message, "Message to verify (defaults to stdin)", NULL, 0, 0),
+    OPT_STRING('M', "message-file", &messageFile, "Message file to verify (defaults to stdin)", NULL, 0, 0),
+    OPT_STRING('s', "signature", &verifySignature, "Signature to verify", NULL, 0, 0),
     OPT_END(),
   };
 
@@ -65,6 +65,14 @@ static int cmd_verify(int argc, const char **argv) {
   }
 
   kp = readKeyFile(keyFile);
+  if (!kp || !kp->public_key) {
+    fprintf(stderr, "Could not decode key file: unknown or invalid format\n");
+    free((void *)sig);
+    free((void *)msg);
+    fclose(fsignature);
+    if (kp) keypair_free(kp);
+    return 1;
+  }
   isValid = ed25519_verify(sig, msg, message_len, kp->public_key);
 
   free((void *)sig);

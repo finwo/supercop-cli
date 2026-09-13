@@ -17,7 +17,7 @@ static int cmd_generate(int argc, const char **argv) {
   };
   struct argparse_option options[] = {
     OPT_HELP(),
-    OPT_STRING('k', "key-file", &keyFile, "Key file to write (defaults to stdout)"),
+    OPT_STRING('k', "key-file", &keyFile, "Key file to write (defaults to stdout)", NULL, 0, 0),
     OPT_END(),
   };
 
@@ -51,8 +51,13 @@ static int cmd_generate(int argc, const char **argv) {
 
   // Encode in the last-registered format
   // TODO: allow format selection
-  int   encoded_length;
+  size_t encoded_length;
   char *encoded = supercop_formats->encode(&kp, &encoded_length);
+  if (!encoded) {
+    fprintf(stderr, "Error while encoding key\n");
+    if (keyFile) fclose(fout);
+    return 1;
+  }
   fwrite(encoded, 1, encoded_length, fout);
   free(encoded);
 

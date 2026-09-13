@@ -12,9 +12,9 @@ extern "C" {
 struct Format {
   void *next;
   char *name;
-  char            (*detect)(unsigned char *);
-  char           *(*encode)(struct KeyPair *, int*);
-  struct KeyPair *(*decode)(unsigned char *);
+  char            (*detect)(unsigned char *, size_t);
+  char           *(*encode)(struct KeyPair *, size_t*);
+  struct KeyPair *(*decode)(unsigned char *, size_t);
 };
 
 #ifdef __cplusplus
