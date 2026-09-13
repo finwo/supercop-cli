@@ -20,6 +20,9 @@ extern struct Format *supercop_formats;
 long fremaining(FILE *fd);
 struct KeyPair *readKeyFile(const char *filename);
 
+// Find a registered key format by name (0x00, asc, hdr); NULL if unknown
+struct Format *supercop_find_format(const char *name);
+
 // Message source: -m string wins, then -M file, then stdin
 FILE *supercop_open_message(const char *message, const char *messageFile);
 

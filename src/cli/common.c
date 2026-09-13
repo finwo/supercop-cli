@@ -16,6 +16,16 @@ long fremaining(FILE *fd) {
   return end - current;
 }
 
+struct Format *supercop_find_format(const char *name) {
+  struct Format *fmt = supercop_formats;
+  if (!name) return NULL;
+  while (fmt) {
+    if (fmt->name && strcmp(fmt->name, name) == 0) return fmt;
+    fmt = fmt->next;
+  }
+  return NULL;
+}
+
 struct KeyPair *readKeyFile(const char *filename) {
   struct Format *fmt = supercop_formats;
   FILE *fd = fopen(filename, "r");

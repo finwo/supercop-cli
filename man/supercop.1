@@ -25,11 +25,11 @@ Show version number and exit (same as \fBsupercop version\fR)
 
 .SH COMMANDS
 .TP
-.B generate\fR [\fB-k\fR \fIkeyfile\fR]
+.B generate\fR [\fIoptions\fR]
 Generate a new key, writing to keyfile or stdout
 .TP
-.B printkey\fR \fB-k\fR \fIkeyfile\fR
-Print contents of key file
+.B printkey\fR [\fIoptions\fR]
+Print contents of key file, optionally converting formats
 .TP
 .B sign\fR \fB-k\fR \fIkeyfile\fR [\fB-m\fR \fImessage\fR | \fB-M\fR \fImessage-file\fR]
 Sign a message
@@ -56,6 +56,15 @@ Message file to sign or verify (defaults to stdin)
 .TP
 .B \-s, \-\-signature\fR \fIsignature_string\fR
 Signature to verify the message against
+.TP
+.B \-f, \-\-format\fR \fIname\fR
+Key format for generate output or printkey conversion: 0x00, asc, hdr
+.TP
+.B \-o, \-\-out\fR \fIpath\fR
+Write printkey output to file instead of stdout
+.TP
+.B \-\-public\-only
+Output only the public half of the key (printkey)
 
 .SH RETURN VALUE
 Here are the possible return values:

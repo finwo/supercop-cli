@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "cli/command.h"
 #include "cli/common.h"
@@ -8,16 +9,20 @@
 
 static int cmd_generate(int argc, const char **argv) {
   const char *keyFile = NULL;
+  const char *format  = "0x00";
   FILE *fout = stdout;
+  struct Format *fmt;
+  struct KeyPair out;
   int result;
 
   static const char *const usages[] = {
-    "supercop generate [-k keyfile]",
+    "supercop generate [options]",
     NULL,
   };
   struct argparse_option options[] = {
     OPT_HELP(),
     OPT_STRING('k', "key-file", &keyFile, "Key file to write (defaults to stdout)", NULL, 0, 0),
+    OPT_STRING('f', "format", &format, "Key format to write (0x00, asc, hdr)", NULL, 0, 0),
     OPT_END(),
   };
 
@@ -45,14 +50,18 @@ static int cmd_generate(int argc, const char **argv) {
   }
 
   ed25519_create_keypair(public_key, private_key, seed);
-  struct KeyPair kp;
-  kp.public_key  = public_key;
-  kp.private_key = private_key;
+  out.public_key  = public_key;
+  out.private_key = private_key;
 
-  // Encode in the last-registered format
-  // TODO: allow format selection
+  // Encode in the requested format (default keeps historical behavior)
+  fmt = supercop_find_format(format);
+  if (!fmt) {
+    fprintf(stderr, "Unknown format: %s\n", format);
+    if (keyFile) fclose(fout);
+    return 1;
+  }
   size_t encoded_length;
-  char *encoded = supercop_formats->encode(&kp, &encoded_length);
+  char *encoded = fmt->encode(&out, &encoded_length);
   if (!encoded) {
     fprintf(stderr, "Error while encoding key\n");
     if (keyFile) fclose(fout);
@@ -85,9 +94,10 @@ void __attribute__((constructor)) cmd_generate_setup(void) {
       "supercop generate - Generate new key\n"
       "\n"
       "Usage:\n"
-      "  supercop generate [-k keyfile]\n"
+      "  supercop generate [options]\n"
       "\n"
       "Options:\n"
-      "  -k, --key-file <path>  Key file to write (defaults to stdout)\n";
+      "  -k, --key-file <path>  Key file to write (defaults to stdout)\n"
+      "  -f, --format <name>    Key format to write: 0x00, asc, hdr (default 0x00)\n";
   commands = cmd;
 }
