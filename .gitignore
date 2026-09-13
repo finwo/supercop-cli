@@ -1,4 +1,5 @@
 *.o
 *.asc
+/build/
 /lib/
 /supercop

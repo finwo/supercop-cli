@@ -1,51 +1,46 @@
-include config.mk
+TARGET:=linux-glibc-amd64
 
-SRC:=
-SRC+=$(wildcard src/*.c)
-SRC+=$(wildcard src/*/*.c)
-SRC+=$(wildcard src/*/*/*.c)
+BIN:=supercop
 
-# Ourselves
-MTUNE?=native
-MARCH?=native
-CFLAGS?=
-CFLAGS+=-D VERSION=\"$(VERSION)\"
-CFLAGS+=-mtune=$(MTUNE) -march=$(MARCH)
-CFLAGS+=-O2 -pipe
-CFLAGS+=-Wall
-
-INCLUDES?=
-INCLUDES+=-Isrc
-
-include lib/.dep/config.mk
-
-# Map SRC into OBJ
-OBJ:=$(patsubst %.c,%.o,$(SRC))
+VERSION?=v1.0.0
 
 .PHONY: default
-default: supercop
+default: build/${TARGET}/${BIN}
+
+FIND:=$(shell command -v gfind find)
+
+WATCH?=
+WATCH+=$(shell $(FIND) src -type f -name '*.c')
+WATCH+=$(shell $(FIND) src -type f -name '*.h')
+
+build/${TARGET}/${BIN}: build/${TARGET} $(WATCH)
+	cd build/${TARGET} && dep install
+	$(MAKE) --directory build/${TARGET} TARGET=${TARGET} VERSION=${VERSION}
+
+build/${TARGET}: $(WATCH)
+	mkdir -p build/${TARGET}
+	cp -rT src/              build/${TARGET}/src
+	cp -rT man/              build/${TARGET}/man
+	cp -rT target/common/    build/${TARGET}
+	cp -rT target/${TARGET}/ build/${TARGET}
+
+.PHONY: targets
+targets:
+	@ls -1 target | grep -v '^common$$'
 
 README.md: ./man/supercop.1
 	pandoc $< --output=$@
 
-supercop: $(OBJ)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ $(OBJ)
-
-.PHONY: small
-static:
-	CFLAGS="-static -Os -s" $(MAKE) "MTUNE=$(MTUNE)" "MARCH=$(MARCH)" supercop
-	strip -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag supercop
-
-%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
-
-.PHONY: install
-install: supercop
-	install -d ${DESTDIR}${PREFIX}/bin
-	install -m 755 supercop ${DESTDIR}${PREFIX}/bin
-	install -d ${DESTDIR}${MANPREFIX}/man1
-	install -m 644 $(wildcard man/*.1) ${DESTDIR}${MANPREFIX}/man1
-
 .PHONY: clean
 clean:
-	rm -rf $(OBJ)
+	rm -rf build
+
+# Never let the catch-all try to rebuild the makefiles themselves
+Makefile: ;
+
+# Forward any other goal verbatim into the assembled target tree
+.PHONY: FORCE
+FORCE:
+%: build/${TARGET} FORCE
+	cd build/${TARGET} && dep install
+	$(MAKE) --directory build/${TARGET} TARGET=${TARGET} VERSION=${VERSION} $@

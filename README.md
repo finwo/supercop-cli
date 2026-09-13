@@ -4,41 +4,55 @@ supercop - Simplified CLI for supercop-ref10
 
 # SYNOPSIS
 
-**supercop** *\<operation\>* \[**-k** *keyfile*\] \[**-m** *message*\]
-\[**-M** *message-file*\] \[**-s** *signature*\]
+**supercop** \[*global options*\] *command* \[*command options*\]\
+**supercop** **list-commands**\
+**supercop** **\--version**
 
 # DESCRIPTION
 
 This program allows easy signing and signature verification for the
 supercop-ref10 implementation of the ed25519 signature scheme.
 
-# OPERATIONS
+Global options must appear before the command name. Run **supercop**
+*command* **\--help** for the details on a single command.
 
-**\--printkey**
-
-:   Print contents of key file
-
-**\--generate**
-
-:   Generate a new key
-
-**\--sign**
-
-:   Sign a message
-
-**\--verify**
-
-:   Verify a message signature
-
-**\--version**
-
-:   Show version number and exit
-
-# OPTIONS
+# GLOBAL OPTIONS
 
 **-h, \--help**
 
 :   Show usage and exit
+
+**-V, \--version**
+
+:   Show version number and exit (same as **supercop version**)
+
+# COMMANDS
+
+**generate \[**-k** *keyfile*\]**
+
+:   Generate a new key, writing to keyfile or stdout
+
+**printkey **-k** *keyfile***
+
+:   Print contents of key file
+
+**sign **-k** *keyfile* \[**-m** *message* \| **-M** *message-file*\]**
+
+:   Sign a message
+
+**verify **-k** *keyfile* **-s** *signature* \[**-m** *message* \| **-M** *message-file*\]**
+
+:   Verify a message signature
+
+**version**
+
+:   Show version number and exit (same as **supercop \--version**)
+
+**list-commands**
+
+:   List available commands
+
+# COMMAND OPTIONS
 
 **-k, \--key-file *path***
 
@@ -68,6 +82,10 @@ Here are the possible return values:
 # ENVIRONMENT
 
 supercop doesn\'t follow any environment variables
+
+# FILES
+
+supercop uses no configuration files
 
 # AUTHOR
 
