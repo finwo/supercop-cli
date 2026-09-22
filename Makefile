@@ -1,4 +1,9 @@
-TARGET:=linux-glibc-amd64
+# Auto-detect target based on host platform
+ifeq ($(shell uname -s),Darwin)
+  TARGET:=darwin-$(shell uname -m)
+else
+  TARGET:=linux-glibc-amd64
+endif
 
 BIN:=supercop
 
@@ -19,10 +24,10 @@ build/${TARGET}/${BIN}: build/${TARGET} $(WATCH)
 
 build/${TARGET}: $(WATCH)
 	mkdir -p build/${TARGET}
-	cp -rT src/              build/${TARGET}/src
-	cp -rT man/              build/${TARGET}/man
-	cp -rT target/common/    build/${TARGET}
-	cp -rT target/${TARGET}/ build/${TARGET}
+	cp -R src/.             build/${TARGET}/src/
+	cp -R man/.             build/${TARGET}/man/
+	cp -R target/common/.   build/${TARGET}/
+	cp -R target/${TARGET}/. build/${TARGET}/
 
 .PHONY: targets
 targets:
