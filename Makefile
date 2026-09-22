@@ -2,7 +2,7 @@
 ifeq ($(shell uname -s),Darwin)
   TARGET:=darwin-$(shell uname -m)
 else
-  TARGET:=linux-glibc-amd64
+  TARGET:=linux-glibc-$(shell uname -m)
 endif
 
 BIN:=supercop
